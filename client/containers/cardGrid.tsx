@@ -24,11 +24,11 @@ import { Recipe as Recipe } from '../slices/cardSlice';
 function CardGrid() {
   const dispatch = useDispatch();
   // States to support live filtering of the recipes
-  const [filteredRecipes, setFilteredRecipes] = React.useState([]);
-  const [filterKeyword, setFilterKeyword] = React.useState('');
+  const [filteredRecipes, setFilteredRecipes] = React.useState<Recipe[]>([]);
+  const [filterKeyword, setFilterKeyword] = React.useState<String>('');
 
   // State to support the add recipe modal.
-  const [openAddRecipe, setOpenAddRecipe] = React.useState(false);
+  const [openAddRecipe, setOpenAddRecipe] = React.useState<Boolean>(false);
 
   // Handler for control the filter keyword in text field.
   //
@@ -63,7 +63,7 @@ function CardGrid() {
     fetch('/recipe/all', { method: 'GET' })
       .then((res) => {
         if (res.ok) return res.json();
-        throw new Error(res.status);
+        throw new Error(String(res.status));
       })
       .then((data) => {
         dispatch(init(data));
@@ -73,12 +73,11 @@ function CardGrid() {
 
   useEffect(() => {
     setFilteredRecipes(
-      recipes.filter((recipe) => {
-        // console.log(recipe)
+      recipesArray.filter((recipe) => {
         return recipe.title.toLowerCase().includes(filterKeyword.toLowerCase())
-    })
+      })
     );
-  }, [recipes, filterKeyword]);
+  }, [recipesArray, filterKeyword]);
 
   return (
     <main>

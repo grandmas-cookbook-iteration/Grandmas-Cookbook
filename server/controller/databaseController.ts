@@ -1,10 +1,19 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable radix */
+import { Request, Response, NextFunction } from 'express';
 const db = require('../models/databaseModels');
 const { deleteFileFromS3 } = require('../utils/awsS3Connection');
 
-const databaseController = {};
+interface databaseController {
+  getAllRecipes: (req: Request, res: Response, next: NextFunction) => void
+  addRecipe: (req: Request, res: Response, next: NextFunction) => void
+  updateRecipe: (req: Request, res: Response, next: NextFunction) => void
+  updateImage: (req: Request, res: Response, next: NextFunction) => void
+  addUserRecipe: (req: Request, res: Response, next: NextFunction) => void
+  deleteRecipe: (req: Request, res: Response, next: NextFunction) => void
+}
 
+//find out structure of databaseRowsArray and define interface
 const camelCaseTheKey = (databaseRowsArray) => {
   const camelCaseArray = databaseRowsArray.map((dbObj) => {
     const ccObj = {};
@@ -26,20 +35,63 @@ const camelCaseTheKey = (databaseRowsArray) => {
   return camelCaseArray;
 };
 
-databaseController.getAllRecipes = (req, res, next) => {
-  const allRecipeQuery = `SELECT * FROM recipes`;
-  db.query(allRecipeQuery)
-    .then((data) => {
-      res.locals = camelCaseTheKey(data.rows);
-      return next();
-    })
-    .catch((error) =>
-      next({
-        log: `Error encountered in databaseController.getAllRecipe, ${error}`,
-        message: 'Error encountered when querying the database.',
+const databaseController: databaseController = {
+  getAllRecipes: (req: Request, res: Response, next: NextFunction) => {
+    const allRecipeQuery = `SELECT * FROM recipes`;
+    db.query(allRecipeQuery)
+    //find intended structure of data from db
+      .then((data) => {
+        res.locals = camelCaseTheKey(data.rows);
+        return next();
       })
-    );
+      .catch((error: Error) =>
+        next({
+          log: `Error encountered in databaseController.getAllRecipe, ${error}`,
+          message: 'Error encountered when querying the database.',
+        })
+      );
+      },
+
+    addRecipe: (req: Request, res: Response, next: NextFunction) => {
+      const {
+        url,
+        title,
+        description,
+        ingredientList,
+        directions,
+        tastyId,
+        imagePath,
+      } = req.body;
+      console.log('reach addRecipe');
+      const addRecipeQuery = `INSERT INTO recipes (url, title, description, ingredientList, directions, tastyId, imagePath) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+      // To also cover Tasty API entries where description can be long.
+      const values = [
+        url,
+        title,
+        !description || description.slice(0, 250),
+        JSON.stringify(ingredientList),
+        JSON.stringify(directions),
+        tastyId,
+        res.locals.awsimagePath || imagePath,
+      ];
+    
+      db.query(addRecipeQuery, values)
+        //find intended structure of data from db
+        .then((data) => {
+          res.locals = camelCaseTheKey(data.rows)[0];
+          return next();
+        })
+        .catch((error) =>
+          next({
+            log: `Error encountered in databaseController.addRecipe, ${error}`,
+            message: 'Error encountered when querying the database.',
+          })
+        );
+    },
+     
 };
+
+
 
 databaseController.addRecipe = (req, res, next) => {
   const {

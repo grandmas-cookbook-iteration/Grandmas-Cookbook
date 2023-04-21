@@ -5,7 +5,8 @@ export interface Recipe {
     title: String,
     image: Blob,
     ingredients: String[],
-    directions: String[]
+    directions: String[],
+    imagePath: String
 }
 
 export interface State {

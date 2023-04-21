@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {FC} from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -9,7 +9,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useSelector, useDispatch } from 'react-redux';
 import MoreButton from "./recipeCardButtons/MoreButton";
 import { deleteCard } from '../slices/cardSlice';
-
+import { Recipe as Recipe } from '../slices/cardSlice';
 
 // const useStyles = makeStyles(theme => ({
 //   root: {
@@ -19,8 +19,15 @@ import { deleteCard } from '../slices/cardSlice';
 //   }
 // }));
 
+interface RecipeProps {
+  recipe: Recipe;
+  children: any; // FIXME: Type?
+  type: String;
+  addHandler: any; // FIXME: type?
+};
 
-function RecipeCard({ recipe, children, type, addHandler }) {
+
+const RecipeCard: FC<RecipeProps> = ({ recipe, children, type, addHandler }) => {
   // need to loop through the the fetch data
   // console.log('type', type)
   // const [saveEdit, setSaveEdit] = useToggle();
@@ -35,7 +42,7 @@ function RecipeCard({ recipe, children, type, addHandler }) {
     })
     .then((res) => {
       if (res.ok) return dispatch(deleteCard(recipe));
-      throw new Error(res.status);
+      throw new Error(String(res.status));
     })
     .catch((err) => console.log(`Error code: ${err}`));
   };

@@ -1,20 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import App from './App';
 import cardReducer, { State as CardState } from "./slices/cardSlice";
 import modalReducer, { State as ModalState } from "./slices/modalSlice";
-import styles from './scss/application';
+import styles from './scss/application.scss';
 
-
-const store = configureStore({
-    reducer: { card: cardReducer, 
-                modal: modalReducer }
+const rootReducer = combineReducers({
+  card: cardReducer,
+  modal: modalReducer,
 });
 
-export type RootState = ReturnType<typeof store.getState>
+const store = configureStore({
+    reducer: rootReducer,
+});
 
+export type RootState = {
+  card : CardState;
+  modal : ModalState;
+}
 ReactDOM.render(
   <Provider store={store}>
     <App />    

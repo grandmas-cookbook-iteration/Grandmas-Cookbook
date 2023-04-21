@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express';
 const router = require('express').Router();
 const scrapingController = require('../controller/scrapingController');
 const databaseController = require('../controller/databaseController');

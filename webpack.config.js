@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: './client/index.js',
+  entry: './client/index.tsx',
   output: {
     // The '/' at the end is required for generate correct URLs for the assts like
     // font files during production
@@ -58,6 +58,8 @@ module.exports = {
         use: [
           // Creates `style` nodes from JS strings
           'style-loader',
+          // generate a .d.ts module next to .scss file
+          // 'css-modules-typescript-load er',
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
@@ -66,7 +68,7 @@ module.exports = {
       },
     ],
   },
-  resolve: [".tsx", ".ts", ".jsx", ".js", ".css", ".sass"],
+  resolve: { extensions: [".tsx", ".ts", ".jsx", ".js", ".css", ".sass", ".scss"]},
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',

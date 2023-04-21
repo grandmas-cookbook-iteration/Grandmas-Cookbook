@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+import { Request, Response, NextFunction } from 'express';
 
 require('dotenv').config();
 
@@ -23,7 +24,7 @@ app.use('/recipe', recipeRouter);
 // serve index.html on the route '/'.
 // The '/*' is to make sure refresh in browser works with frontend routing (https://ui.dev/react-router-cannot-get-url-refresh)
 if (process.env.NODE_ENV === 'production') {
-  app.get('/*', (req, res) =>
+  app.get('/*', (req: Request, res: Response) =>
     res.status(200).sendFile(path.join(__dirname, '../dist/index.html'))
   );
 }
@@ -32,7 +33,7 @@ if (process.env.NODE_ENV === 'production') {
  * To-Do: Add a 404 page backup route
  */
 
-app.use((err, req, res, next) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
     status: 500,

@@ -9,7 +9,7 @@ function APIAddForm() {
     const keywordFieldValue = useRef('');
     const tagFieldValue = useRef('');
     const dispatch = useDispatch();
-    const { keywordResults, clearKeywordResult } = useSelector(state=>state.modal)
+    const { keywordResults, clearKeywordResult } = useSelector(state => state.modal)
     const [open, setOpen] = React.useState(false);
     const [queryError, setQueryError] = React.useState(false)
     const [success, setSuccess] = React.useState(false);

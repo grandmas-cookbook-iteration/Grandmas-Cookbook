@@ -1,6 +1,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable radix */
 import { Request, Response, NextFunction } from 'express';
+import { QueryResult } from 'pg';
 const db = require('../models/databaseModels');
 const { deleteFileFromS3 } = require('../utils/awsS3Connection');
 import { RouteType } from './RouteType';
@@ -14,27 +15,42 @@ interface databaseController {
   deleteRecipe: RouteType
 }
 
-//find out structure of databaseRowsArray and define interface
-const camelCaseTheKey = (databaseRowsArray) => {
-  const camelCaseArray = databaseRowsArray.map((dbObj) => {
-    const ccObj = {};
-    Object.assign(
-      ccObj,
-      dbObj,
-      { ingredientList: dbObj.ingredientlist },
-      { tastyId: dbObj.tastyid },
-      { imagePath: dbObj.imagepath },
-      { userId: dbObj.userid }
-    );
-    delete ccObj.ingredientlist;
-    delete ccObj.tastyid;
-    delete ccObj.imagepath;
-    delete ccObj.userid;
-    return ccObj;
-  });
 
-  return camelCaseArray;
-};
+//generate interface for ingredientList and directions
+interface Recipe {
+  id: number
+  url: String
+  title: String
+  description: String
+  ingredientList: String
+  directions: String
+  tastyId: number
+  imagePath: String
+  userId: number
+}
+
+//find out structure of databaseRowsArray and define interface
+// const camelCaseTheKey = (databaseRowsArray: Recipe[]) => {
+//   const camelCaseArray = databaseRowsArray.map((dbObj) => {
+//     const ccObj = {};
+//     Object.assign(
+//       ccObj,
+//       dbObj,
+//       { ingredientList: dbObj.ingredientlist },
+//       { tastyId: dbObj.tastyid },
+//       { imagePath: dbObj.imagepath },
+//       { userId: dbObj.userid }
+//     );
+//     delete ccObj.ingredientlist;
+//     delete ccObj.tastyid;
+//     delete ccObj.imagepath;
+//     delete ccObj.userid;
+//     return ccObj;
+//   });
+
+//   return camelCaseArray;
+// };
+
 
 const databaseController: databaseController = {
 
@@ -42,8 +58,9 @@ const databaseController: databaseController = {
     const allRecipeQuery = `SELECT * FROM recipes`;
     db.query(allRecipeQuery)
       //find intended structure of data from db
-      .then((data) => {
-        res.locals = camelCaseTheKey(data.rows);
+      .then((data: QueryResult) => {
+        res.locals = data.rows;
+        //res.locals = camelCaseTheKey(data.rows);
         return next();
       })
       .catch((error: Error) =>
@@ -79,8 +96,9 @@ const databaseController: databaseController = {
 
     db.query(addRecipeQuery, values)
       //find intended structure of data from db
-      .then((data) => {
-        res.locals = camelCaseTheKey(data.rows)[0];
+      .then((data: QueryResult) => {
+        res.locals = data.rows[0];
+        //res.locals = camelCaseTheKey(data.rows)[0];
         return next();
       })
       .catch((error: Error) =>
@@ -114,8 +132,9 @@ const databaseController: databaseController = {
     ];
 
     db.query(updateRecipeQuery, values)
-      .then((data) => {
-        res.locals = camelCaseTheKey(data.rows)[0];
+      .then((data:QueryResult) => {
+        res.locals = data.rows[0]
+        // res.locals = camelCaseTheKey(data.rows)[0];
         return next();
       })
       .catch((error: Error) =>
@@ -140,8 +159,9 @@ const databaseController: databaseController = {
     const values = [parseInt(id), res.locals.awsimagePath];
 
     db.query(updateImageQuery, values)
-      .then((data) => {
-        res.locals = camelCaseTheKey(data.rows)[0];
+      .then((data: QueryResult) => {
+        //res.locals = camelCaseTheKey(data.rows)[0];
+        res.locals = data.rows[0];
         const oldImagePath = res.locals.oldimagepath;
         if (
           oldImagePath &&
@@ -183,7 +203,7 @@ const databaseController: databaseController = {
     const values = [parseInt(id)];
 
     db.query(deleteRecipeQuery, values)
-      .then((data) => {
+      .then((data: QueryResult) => {
         const imagePath = data.rows[0].imagepath;
         if (
           imagePath &&
@@ -223,8 +243,9 @@ const databaseController: databaseController = {
       `;
     const values = [parseInt(id)];
     db.query(queryString, values)
-      .then((data) => {
-        res.locals = camelCaseTheKey(data.rows);
+      .then((data: QueryResult) => {
+        res.locals = data.rows;
+        // res.locals = camelCaseTheKey(data.rows);
         return next();
 
       })

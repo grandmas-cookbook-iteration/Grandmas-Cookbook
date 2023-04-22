@@ -24,16 +24,18 @@ const scrapeEpicurious: RouteType = (req, res, next) => {
       ).children('div');
       const directionNodes = $('div[data-testid="InstructionsWrapper"] p');
       //figure out shape of data here, then define interfaces for ingredienetList and directions
-      const ingredientList = [];
-      const directions = [];
+      const ingredientList: String[] = [];
+      const directions: String[] = [];
 
       //i is never referenced here, not sure if el is accessing the index and the intent is to use i as a standin for first parameter
       ingredientListNodes.children().each((i: number, el: Element) => {
-        ingredientList.push($(el).text().trim());
+        const trimmedEl: String = $(el).text().trim();
+        ingredientList.push(trimmedEl);
       });
 
       directionNodes.each((i: number, el: Element) => {
-        directions.push($(el).text().trim());
+        const trimmedEl: String = $(el).text().trim();
+        directions.push(trimmedEl);
       });
 
       res.locals.title = title;
@@ -62,17 +64,19 @@ const scrapeFoodnetwork : RouteType = (req, res, next) => {
       );
       const directionsNodes = $('.o-Method__m-Step');
 
-      const ingredientList = [];
-      const directions = [];
+      const ingredientList: String[] = [];
+      const directions: String[] = [];
 
       ingredientListNodes.each((i: Number, el: Element) => {
         if (i) {
-          ingredientList.push($(el).text().trim());
+          const trimmedEl: String = $(el).text().trim();
+          ingredientList.push(trimmedEl);
         }
       });
 
       directionsNodes.each((i: Number, el: Element) => {
-        directions.push($(el).text().trim());
+        const trimmedEl: String = $(el).text().trim();
+        directions.push(trimmedEl);
       });
 
       res.locals.title = title;

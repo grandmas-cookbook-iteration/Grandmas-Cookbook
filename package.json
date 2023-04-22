@@ -28,6 +28,7 @@
     "@mui/styled-engine-sc": "^5.11.11",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/node-fetch": "^2.6.3",
+    "@types/pg": "^8.6.6",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "aws-sdk": "^2.1354.0",

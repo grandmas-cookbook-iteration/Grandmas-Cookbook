@@ -21,13 +21,16 @@ import { Recipe as Recipe } from '../slices/cardSlice';
 
 interface RecipeProps {
   recipe: Recipe;
-  children: any; // FIXME: Type?
+  // children: any; // FIXME: Type?
   type: String;
-  addHandler: any; // FIXME: type?
+  addHandler: ((recipe: Recipe) => () => undefined);
+  title: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
+  image: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
 };
 
+// Rethink how this component is being rendered in different ways within cardGrid and ApiAddForm, leading to unnecessary props being passed from cardGrid (addHandler)
 
-const RecipeCard: FC<RecipeProps> = ({ recipe, children, type, addHandler }) => {
+const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler }) => {
   // need to loop through the the fetch data
   // console.log('type', type)
   // const [saveEdit, setSaveEdit] = useToggle();
@@ -47,7 +50,7 @@ const RecipeCard: FC<RecipeProps> = ({ recipe, children, type, addHandler }) => 
     .catch((err) => console.log(`Error code: ${err}`));
   };
 
-  if (deleteButton)
+  if (deleteButton) {
     return (
       <Card sx={{ maxWidth: 600,
       }}
@@ -58,7 +61,7 @@ const RecipeCard: FC<RecipeProps> = ({ recipe, children, type, addHandler }) => 
           alt="recipe image"
           sx={{width: '258px', height: '256px',  alignItems:'flex-end'}}
           // height="140"
-          image={recipe.imagePath}
+          image={String(recipe.imagePath)}
         />
         <CardContent >
           <Typography
@@ -76,9 +79,13 @@ const RecipeCard: FC<RecipeProps> = ({ recipe, children, type, addHandler }) => 
             Delete
           </Button>
         </CardActions>
-        {children}
+        {/* commenting out for now, it seems like RecipeCard doesn't have children */}
+        {/* {children} */}
       </Card>
     );
+  } else {
+    return null;
+  }
 }
 
 export default RecipeCard;

@@ -3,7 +3,7 @@ import { TextField, Button, Box, Typography, Backdrop, CircularProgress, Alert} 
 import { useSelector, useDispatch } from 'react-redux'
 import { setKeywordResult } from '../../slices/modalSlice';
 import { addCard } from '../../slices/cardSlice'
-import RecipeCard from '../recipeCard.jsx';
+import RecipeCard from '../recipeCard';
 
 function APIAddForm() {
     const keywordFieldValue = useRef('');
@@ -16,10 +16,10 @@ function APIAddForm() {
     const cardArr = []
     
     const handleClose = () => {
-      setOpen(false);
+        setOpen(false);
     };
     const handleOpen = () => {
-      setOpen(true);
+        setOpen(true);
     };
     
     const addHandler = (recipe) => {
@@ -120,3 +120,4 @@ function APIAddForm() {
 }
 
 export default APIAddForm;
+

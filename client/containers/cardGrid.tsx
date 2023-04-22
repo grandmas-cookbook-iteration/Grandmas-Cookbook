@@ -20,6 +20,8 @@ import { init } from '../slices/cardSlice';
 import { clearKeywordResult } from '../slices/modalSlice';
 import { RootState } from '../index';
 import { Recipe as Recipe } from '../slices/cardSlice';
+import APIAddForm from '../components/forms/ApiAddForm';
+
 
 function CardGrid() {
   const dispatch = useDispatch();
@@ -111,7 +113,7 @@ function CardGrid() {
                           flexDirection: 'column',
                         }}
                       >
-                        <RecipeCard recipe={card} title={card.title} image={card.imagePath} />
+                        <RecipeCard addHandler={(card) => () => undefined} type='' recipe={card} title={card.title} image={card.imagePath} />
                       </Card>
                     </Grid>
                   ))}

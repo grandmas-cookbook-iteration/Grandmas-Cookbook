@@ -3,6 +3,7 @@ import { Response as FetchResponse } from 'node-fetch';
 const cheerio = require('cheerio');
 import { Element } from 'cheerio';
 const fetch = require('node-fetch');
+import { RouteType } from './RouteType'
 
 //typeguard for url
 
@@ -11,7 +12,7 @@ const hasUrl = (query: any): query is { url: string } => {
 }
 
 // Fetch from www.epicurious.com
-const scrapeEpicurious = (req: Request, res: ExpressResponse, next: NextFunction) => {
+const scrapeEpicurious: RouteType = (req, res, next) => {
   fetch(res.locals.url)
     .then((response: FetchResponse) => response.text())
     //extract response.text(), assuming html should be string type
@@ -50,7 +51,7 @@ const scrapeEpicurious = (req: Request, res: ExpressResponse, next: NextFunction
 };
 
 // Fetch from www.foodnetwork.com
-const scrapeFoodnetwork = (req: Request, res: ExpressResponse, next: NextFunction) => {
+const scrapeFoodnetwork : RouteType = (req, res, next) => {
   fetch(res.locals.url)
     .then((response: FetchResponse) => response.text())
     .then((html: String) => {
@@ -82,21 +83,24 @@ const scrapeFoodnetwork = (req: Request, res: ExpressResponse, next: NextFunctio
     });
 };
 
-module.exports = (req: Request, res: ExpressResponse, next: NextFunction) => {
-  if (hasUrl(req.query)) {
-    const { url } = req.query;
-    res.locals.url = url;
-    const check = url.includes('epicurious');
-    if (url.includes('epicurious')) {
-      scrapeEpicurious(req, res, next);
-    } else if (url.includes('foodnetwork')) {
-      scrapeFoodnetwork(req, res, next);
-    } else {
-      next({
-        log: 'Error encountered in scrapingController. Requested URL is not supported by this app.',
-        status: 406,
-        message: 'Requested URL is not supported by this app.',
-      });
+const scrapeHandler: RouteType = (req, res, next) =>  {
+    if (hasUrl(req.query)) {
+      const { url } = req.query;
+      res.locals.url = url;
+      const check = url.includes('epicurious');
+      if (url.includes('epicurious')) {
+        scrapeEpicurious(req, res, next);
+      } else if (url.includes('foodnetwork')) {
+        scrapeFoodnetwork(req, res, next);
+      } else {
+        next({
+          log: 'Error encountered in scrapingController. Requested URL is not supported by this app.',
+          status: 406,
+          message: 'Requested URL is not supported by this app.',
+        });
+      }
     }
-  }
-};
+  };
+
+
+module.exports = scrapeHandler;

@@ -19,13 +19,14 @@ import { Recipe as Recipe } from '../slices/cardSlice';
 //   }
 // }));
 
-interface RecipeProps {
+export interface RecipeProps {
   recipe: Recipe;
   // children: any; // FIXME: Type?
   type: String;
-  addHandler: ((recipe: Recipe) => () => undefined);
+  addHandler: ((recipe: Recipe) => () => void);
   title: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
   image: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
+  key: String;
 };
 
 // Rethink how this component is being rendered in different ways within cardGrid and ApiAddForm, leading to unnecessary props being passed from cardGrid (addHandler)

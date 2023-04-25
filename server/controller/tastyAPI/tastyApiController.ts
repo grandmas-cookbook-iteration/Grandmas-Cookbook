@@ -10,19 +10,18 @@ interface tastyApiController {
     tastyList: RouteType
     tastyGetTags: RouteType 
     tastyFindSimilarRecipeByID: RouteType
-    tastyGetMoreInfo: RouteType
     tastyGetTipsForID: RouteType
     tastyGetFeed: RouteType
 };
 
 interface Dish {
     tasty_id: number,
-    title: String,
-    description: String,
-    directions: String[],
-    ingredientList: String[],
-    tags: String[],
-    imagePath: String
+    title: string,
+    description: string,
+    directions: string[],
+    ingredientList: string[],
+    tags: string[],
+    imagePath: string
 }
 
 interface AutoCompleteQuery {
@@ -47,6 +46,27 @@ interface TagQuery {
     display_name: string,
 }
 
+
+//similarQuery object is a nightmare, idk how to properly type all of it, may look into later
+//probably most practical to leave it like this for now
+
+interface SimilarIDQuery {
+    count : number,
+    results: any[]
+}
+
+// interface SimilarQueryObj {
+//     video_ad_content: any,
+//     promotion: string,
+//     nutrition_visibility: string,
+//     instructions: SimilarRecipeObj[]
+// }
+
+// interface SimilarRecipeObj {
+//     appliance: null | string,
+//     end_time: 
+// }
+
 const options = {
     method: 'GET',
     headers: {
@@ -65,7 +85,7 @@ const tastyApiController: tastyApiController = {
             //find structure of dataJson
             .then((dataJson : AutoCompleteQueryJson) => {
                 const resultArray: AutoCompleteQuery[] = dataJson.results;
-                const searchVals: String[] = [];
+                const searchVals: string[] = [];
                 //find structure of dataJson.results in order to define interface
                 resultArray.forEach((el: AutoCompleteQuery) => {
                     searchVals.push(el.search_value);
@@ -80,9 +100,9 @@ const tastyApiController: tastyApiController = {
                 })
             });
     }, 
+  
 
-
-    tastyList: (req, res, next) => {
+    tastyList: (req, res, next) => { 
         const { start } = req.params;
         const { size } = req.params;
         let { tags } = req.params;
@@ -124,9 +144,9 @@ const tastyApiController: tastyApiController = {
                 for (let i = 0; i < resultArray.length; i++) {
                     if (resultArray[i] === undefined || resultArray[i] === null) continue;
                     let el = resultArray[i];
-                    const preparations: String[] = [];
-                    const recipeTags: String[]= [];
-                    const ingredients: String[] = [];
+                    const preparations: string[] = [];
+                    const recipeTags: string[]= [];
+                    const ingredients: string[] = [];
                     //find structure of instruction, define interface
                     if (el.instructions !== undefined && el.instructions !== null) {
                         for (let j = 0; j < el.instructions.length; j++) {
@@ -179,7 +199,7 @@ const tastyApiController: tastyApiController = {
             });
     },
 
-    // tastyList({body:{start: 0, size: 20, tags: ['under_30_minutes'], q:['pasta']}});
+    //tastyList({body:{start: 0, size: 20, tags: ['under_30_minutes'], q:['pasta']}});
 
     tastyGetTags: (req, res, next) => {
         const type = tastyTypes.tags.LIST;
@@ -189,7 +209,7 @@ const tastyApiController: tastyApiController = {
             //find structure of json
             .then((json: GetTagsJson) => {
                 const tastyTags = json.results;
-                const tagsArr : String[] = [];
+                const tagsArr : string[] = [];
 
                 tastyTags.forEach((tag) => (
                     tagsArr.push(tag.name)
@@ -217,7 +237,7 @@ const tastyApiController: tastyApiController = {
         fetch(`${url}recipes/${type}?recipe_id=${id}`, options)
             .then((result : FetchResponse) => result.json())
             //find structure of json
-            .then((json : any) => {
+            .then((json : SimilarIDQuery) => {
                 res.locals.similarRecipe = json;
                 next();
             })
@@ -233,24 +253,24 @@ const tastyApiController: tastyApiController = {
 
     // TODO: POSSIBLY REMOVE AS THIS ENDPOINT IS REDUNDANT
 
-    tastyGetMoreInfo: (req, res, next) => {
-        const { id } = req.body;
-        const type = tastyTypes.recipes.GET_MORE_INFO;
+    // tastyGetMoreInfo: (req, res, next) => {
+    //     const { id } = req.body;
+    //     const type = tastyTypes.recipes.GET_MORE_INFO;
 
-        fetch(`${url}recipes/${type}?id=${id}`, options)
-            .then((result : FetchResponse) => result.json())
-            //find structure of json
-            .then((json : any) => {
-                res.locals.recipeData = json;
-                next();
-            })
-            .catch((err: Error) => {
-                next({
-                    log: `Error encountered in tastyApiController/tastyGetMoreInfo function. ${err}`,
-                    message: 'Could not query the data',
-                })
-            });
-    },
+    //     fetch(`${url}recipes/${type}?id=${id}`, options)
+    //         .then((result : FetchResponse) => result.json())
+    //         //find structure of json
+    //         .then((json : any) => {
+    //             res.locals.recipeData = json;
+    //             next();
+    //         })
+    //         .catch((err: Error) => {
+    //             next({
+    //                 log: `Error encountered in tastyApiController/tastyGetMoreInfo function. ${err}`,
+    //                 message: 'Could not query the data',
+    //             })
+    //         });
+    // },
 
     // tastyGetMoreInfo({body:{id: 8138}});
 

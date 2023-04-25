@@ -12,7 +12,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const convertStrToFileName = (str: String) =>
+const convertStrToFileName = (str: string) =>
   `${str.toLowerCase().replace(/\s/gi, '-')}.jpg`;
 
 interface dalleImageController {

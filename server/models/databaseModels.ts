@@ -1,5 +1,5 @@
 // Node-PostgreSQL package for connecting node server with PostgreSQL database
-const { Pool } = require('pg');
+import { Pool, QueryResult } from 'pg';
 require('dotenv').config();
 
 const pool = new Pool({
@@ -51,11 +51,15 @@ It is a good practice to have id in the table, to provide a stable reference poi
   )
  */
 
-module.exports = {
-  query: (text, params, callback) => {
-    console.log('Executed query: ', text);
-
-    // Simplified version query (no need to connect or release in pool), but cannot be used for transaction(https://node-postgres.com/features/transactions).
-    return pool.query(text, params, callback);
-  },
+export const db = {
+  query: async (text: string, params?: any[]): Promise<QueryResult<any>> => {
+    console.log('executed query', text);
+    try {
+      const result = await pool.query(text, params);
+      return result;
+    } catch (error) {
+      console.error('Error in db query:', error)
+      throw error;
+    }
+  }
 };

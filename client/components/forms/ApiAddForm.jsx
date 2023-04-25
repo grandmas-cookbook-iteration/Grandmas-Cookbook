@@ -33,6 +33,7 @@ function APIAddForm() {
                 'Content-type': 'application/json',
             }})
             .then((res) => {
+                console.log("recipe", recipe)
                 if (res.ok) return res.json();
                 throw new Error(res.status);
               })

@@ -3,6 +3,8 @@ const fs = require('fs/promises');
 const path = require('path');
 const { Readable } = require('stream');
 const { uploadeFileToS3 } = require('../utils/awsS3Connection');
+import { Request, Response, NextFunction} from 'express';
+import { RouteType } from './RouteType';
 
 const configuration = new Configuration({
   apiKey: process.env.DALLE_KEY,
@@ -10,12 +12,15 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const convertStrToFileName = (str) =>
+const convertStrToFileName = (str: string) =>
   `${str.toLowerCase().replace(/\s/gi, '-')}.jpg`;
 
-const dalleImageController = {};
+interface dalleImageController {
+  generateImage: RouteType
+}
 
-dalleImageController.generateImage = async (req, res, next) => {
+const dalleImageController: dalleImageController = {
+  generateImage : async (req, res, next) => {
   console.log('reached generateImage');
   const { imagePath } = req.body;
   if (!imagePath) {
@@ -63,6 +68,7 @@ dalleImageController.generateImage = async (req, res, next) => {
   } else {
     return next();
   }
-};
+},
+}
 
 module.exports = dalleImageController;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { FC } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,9 +13,19 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-function Copyright(props) {
+
+interface SxProps {
+  mt: number;
+};
+
+interface CopyrightProps {
+  sx: SxProps;
+};
+
+const Copyright: FC<CopyrightProps> = ({ sx }) => {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="text.secondary" align="center" {...sx}>
+    {/* <Typography variant="body2" color="text.secondary" align="center" {...props}> mt={5} */}
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         Grandma's cookbook
@@ -29,7 +39,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({

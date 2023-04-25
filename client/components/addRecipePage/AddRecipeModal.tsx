@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Modal from '@mui/material/Modal';
 import AddRecipeTab from './AddRecipeTab.jsx';
+import { FC } from 'react';
 
 const boxStyle = {
   position: 'absolute',
@@ -17,7 +18,13 @@ const boxStyle = {
   p: 4,
 };
 
-export default function AddRecipeModal({ open, handleClose }) {
+
+interface AddRecipeModalProps {
+  open: boolean;
+  handleClose: () => void;
+};
+
+const AddRecipeModal: FC<AddRecipeModalProps> = ({ open, handleClose }) => {
   return (
     <Modal
       open={open}
@@ -34,4 +41,6 @@ export default function AddRecipeModal({ open, handleClose }) {
       </Box>
     </Modal>
   );
-}
+};
+
+export default AddRecipeModal;

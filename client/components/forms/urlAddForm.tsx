@@ -1,13 +1,14 @@
 import React, { useRef } from 'react';
 import { TextField, Button, Box, Typography, CircularProgress, Backdrop, Alert} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux'
-import { setUrlResult, clearUrlResult } from '../../slices/modalSlice';
+import { setUrlResult, clearUrlResult, State as ModalState } from '../../slices/modalSlice';
 import { addCard } from '../../slices/cardSlice'
+import { RootState } from '../..';
 
 function UrlAddForm() {
     const fieldValue = useRef('');
     const dispatch = useDispatch();
-    const {urlScrape} = useSelector(state=>state.modal)
+    const {urlScrape} = useSelector<RootState, ModalState>(state=>state.modal) // FIXME: what is the type here? we don't see this component being rendered
     const [open, setOpen] = React.useState(false);
     const [queryError, setQueryError] = React.useState(false);
     
@@ -19,14 +20,14 @@ function UrlAddForm() {
     };
     // const { ingredientList, directions, title} = urlScrape
     
-    async function handleSubmit(e) {
+    async function handleSubmit(e:React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         setQueryError(false)
         handleOpen();
-        await fetch(`http://localhost:3000/recipe/scrapeUrl/?url=${fieldValue.current.value}`)
+        await fetch(`http://localhost:3000/recipe/scrapeUrl/?url=${fieldValue.current.valueOf()}`)
         .then((res) => {
             if (res.ok) return res.json();
-            throw new Error(res.status);
+            throw new Error(String(res.status));
           })
         .then((data) => {
           dispatch(setUrlResult(data))
@@ -38,7 +39,7 @@ function UrlAddForm() {
         })
     };
 
-    function addHandler(e) {
+    function addHandler(e:React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         setQueryError(false);
         handleOpen();
@@ -50,7 +51,7 @@ function UrlAddForm() {
             }})
             .then((res) => {
                 if (res.ok) return res.json();
-                throw new Error(res.status);
+                throw new Error(String(res.status));
               })
             .then(data => dispatch(addCard(data)))
             .then(() => handleClose())
@@ -75,7 +76,7 @@ function UrlAddForm() {
                 <Typography variant='h6'>
                     ingredients
                 </Typography>
-                { !urlScrape.ingredientList ? null : urlScrape.ingredientList.map((item, i=0) => {
+                { !urlScrape.ingredientList ? null : urlScrape.ingredientList.map((item: String, i=0) => {
                     i += 1;
                     return <li key={`ingredient${i}`}>{item}</li> 
                 } 
@@ -83,7 +84,7 @@ function UrlAddForm() {
                 <Typography variant='h6'>
                     directions
                 </Typography>
-                { !urlScrape.directions ? null : urlScrape.directions.map((item, i = 0) => {
+                { !urlScrape.directions ? null : urlScrape.directions.map((item: String, i = 0) => {
                     i += 1;
                     return <li key={`direction${i}`}>{item}</li> 
                     }) 

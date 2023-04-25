@@ -12,6 +12,7 @@ interface urlScrape {
 export interface State {
     urlScrape: urlScrape
     keywordResults: String[]
+    clearKeywordResult: (state: State) => undefined
 }
 
 interface UrlParam {

@@ -1,19 +1,21 @@
-import React, { useRef, FC } from 'react';
+import React, { useRef, FC, ReactElement } from 'react';
 import { TextField, Button, Box, Typography, Backdrop, CircularProgress, Alert} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux'
-import { setKeywordResult } from '../../slices/modalSlice';
+import { setKeywordResult, clearKeywordResult, State as ModalState } from '../../slices/modalSlice';
 import { addCard } from '../../slices/cardSlice'
 import RecipeCard, { RecipeProps } from '../recipeCard';
+import { RootState } from '../..';
+
 
 function APIAddForm() {
     const keywordFieldValue = useRef('');
     const tagFieldValue = useRef('');
     const dispatch = useDispatch();
-    const { keywordResults, clearKeywordResult } = useSelector(state => state.modal) // FIXME: what is the type here? we don't see this component being rendered
+    const { keywordResults, clearKeywordResult } = useSelector<RootState, ModalState>(state => state.modal) // FIXME: what is the type here? we don't see this component being rendered
     const [open, setOpen] = React.useState(false);
     const [queryError, setQueryError] = React.useState(false)
     const [success, setSuccess] = React.useState(false);
-    const cardArr: FC<RecipeProps>[] = [];
+    const cardArr: ReactElement[] = [];
     
     const handleClose = () => {
         setOpen(false);
@@ -45,7 +47,7 @@ function APIAddForm() {
         }
     }
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         handleOpen();
         setQueryError(false)

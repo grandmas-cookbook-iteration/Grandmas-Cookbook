@@ -31,7 +31,7 @@ export interface RecipeProps {
 
 // Rethink how this component is being rendered in different ways within cardGrid and ApiAddForm, leading to unnecessary props being passed from cardGrid (addHandler)
 
-const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler }) => {
+const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, image, key }) => {
   // need to loop through the the fetch data
   // console.log('type', type)
   // const [saveEdit, setSaveEdit] = useToggle();

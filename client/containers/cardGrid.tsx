@@ -30,7 +30,7 @@ function CardGrid() {
   const [filterKeyword, setFilterKeyword] = React.useState<String>('');
 
   // State to support the add recipe modal.
-  const [openAddRecipe, setOpenAddRecipe] = React.useState<Boolean>(false);
+  const [openAddRecipe, setOpenAddRecipe] = React.useState<boolean>(false);
 
   // Handler for control the filter keyword in text field.
   //
@@ -113,7 +113,7 @@ function CardGrid() {
                           flexDirection: 'column',
                         }}
                       >
-                        <RecipeCard addHandler={(card) => () => undefined} type='' recipe={card} title={card.title} image={card.imagePath} />
+                        <RecipeCard key={`${card.id}`} addHandler={(card) => () => undefined} type='' recipe={card} title={card.title} image={card.imagePath} />
                       </Card>
                     </Grid>
                   ))}

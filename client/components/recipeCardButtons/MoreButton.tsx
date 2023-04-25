@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -8,10 +8,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateCard } from '../../slices/cardSlice';
 import { purple } from '@mui/material/colors';
+import { Recipe as Recipe } from '../../slices/cardSlice';
 
-export default function MoreButton({ recipe }) {
+interface MoreButtonProps {
+  recipe: Recipe;
+};
+
+const MoreButton: FC<MoreButtonProps> = ({ recipe }) => {
   const [open, setOpen] = React.useState(false);
-  const [scroll, setScroll] = React.useState('paper');
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
   //   useEffect(() => {
   //     if (page) dispatch(getPosts(page));
@@ -38,22 +43,21 @@ export default function MoreButton({ recipe }) {
   }
 
   const canEditLogic = () => {
-    if (canEdit) {
-      console.log(
-        'ingredientText',
-        document.getElementById(`${recipe.id}ingredientText`).textContent
-      );
+    const ingredientText = document.getElementById(`${recipe.id}ingredientText`);
+    const directionsText = document.getElementById(`${recipe.id}directions`);
+    
+    if (canEdit && ingredientText && ingredientText.textContent && directionsText && directionsText.textContent) {
+      // console.log(
+      //   'ingredientText',
+      //   document.getElementById(`${recipe.id}ingredientText`).textContent
+      // );
       setSaveEditButton('Edit');
       fetch(`/recipe/update/${recipe.id}`, {
         method: 'PUT',
         body: JSON.stringify({
           ...recipe,
-          ingredientList: document
-            .getElementById(`${recipe.id}ingredientText`)
-            .textContent.split('\n'),
-          directions: document
-            .getElementById(`${recipe.id}directions`)
-            .textContent.split('\n'),
+          ingredientList: ingredientText.textContent.split('\n'), 
+          directions: directionsText.textContent.split('\n'),
         }),
         headers: {
           'Content-type': 'application/json',
@@ -61,7 +65,7 @@ export default function MoreButton({ recipe }) {
       })
         .then((res) => {
           if (res.ok) return res.json();
-          throw new Error(res.status);
+          throw new Error(String(res.status));
         })
         .then((data) => {
           // console.log(data);
@@ -72,7 +76,7 @@ export default function MoreButton({ recipe }) {
     setCanEdit((state) => !state);
   };
 
-  const handleClickOpen = (scrollType) => () => {
+  const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
     setOpen(true);
     setScroll(scrollType);
   };
@@ -81,7 +85,7 @@ export default function MoreButton({ recipe }) {
     setOpen(false);
   };
 
-  const descriptionElementRef = React.useRef(null);
+  const descriptionElementRef = React.useRef<HTMLInputElement>(null); // FIXME: (type) is it an input element?
   React.useEffect(() => {
     if (open) {
       const { current: descriptionElement } = descriptionElementRef;
@@ -109,11 +113,11 @@ export default function MoreButton({ recipe }) {
             id={`${recipe.id}ingredientText`}
             ref={descriptionElementRef}
             tabIndex={-1}
-            contentEditable={canEdit.toString()}
+            contentEditable={canEdit} // why were they parsing it as a string here?
             // multiline
             style={{ whiteSpace: 'pre-line' }}
           >
-            {recipe.ingredientList ? recipe.ingredientList.join('\n') : null}
+            {recipe.ingredients ? recipe.ingredients.join('\n') : null}
           </DialogContentText>
         </DialogContent>
 
@@ -122,7 +126,7 @@ export default function MoreButton({ recipe }) {
             id={`${recipe.id}directions`}
             ref={descriptionElementRef}
             tabIndex={-1}
-            contentEditable={canEdit.toString()}
+            contentEditable={canEdit}
             // multiline
             style={{ whiteSpace: 'pre-line' }}
           >
@@ -142,3 +146,7 @@ export default function MoreButton({ recipe }) {
     </div>
   );
 }
+
+
+
+export default MoreButton;

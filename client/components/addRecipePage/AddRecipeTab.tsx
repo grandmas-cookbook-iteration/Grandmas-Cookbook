@@ -5,11 +5,20 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useDispatch } from 'react-redux'
-import UrlAddForm from '../forms/urlAddForm.jsx';
-import { clearKeywordResult } from '../../slices/modalSlice.js';
-import APIAddForm from '../forms/ApiAddForm.jsx';
+import UrlAddForm from '../forms/urlAddForm';
+import { clearKeywordResult } from '../../slices/modalSlice';
+import APIAddForm from '../forms/ApiAddForm';
+import { FC, SyntheticEvent } from 'react';
 
-function TabPanel(props) {
+interface TabPanelProps {
+  value: Number;
+  index: Number;
+  children: React.ReactNode;
+} 
+
+// function TabPanel(props) {
+const TabPanel: FC<TabPanelProps> = (props) => {
+
   const { children, value, index, ...other } = props;
 
   return (
@@ -29,7 +38,8 @@ export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
   const dispatch = useDispatch();
 
-  const handleChange = (event, newValue) => {
+  // const handleChange = (event, newValue) => {
+    const handleChange = (event: SyntheticEvent<Element, Event>, newValue: number) => {
     setValue(newValue);
     dispatch(clearKeywordResult())
   };
@@ -47,10 +57,10 @@ export default function BasicTabs() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <UrlAddForm/>
+        <UrlAddForm />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <APIAddForm/>
+        <APIAddForm />
       </TabPanel>
     </Box>
   );

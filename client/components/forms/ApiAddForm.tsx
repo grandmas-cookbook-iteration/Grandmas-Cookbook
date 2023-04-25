@@ -1,28 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useRef, FC, ReactElement } from 'react';
 import { TextField, Button, Box, Typography, Backdrop, CircularProgress, Alert} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux'
-import { setKeywordResult } from '../../slices/modalSlice';
+import { setKeywordResult, clearKeywordResult, State as ModalState } from '../../slices/modalSlice';
 import { addCard } from '../../slices/cardSlice'
-import RecipeCard from '../recipeCard.jsx';
+import RecipeCard, { RecipeProps } from '../recipeCard';
+import { RootState } from '../..';
+
 
 function APIAddForm() {
     const keywordFieldValue = useRef('');
     const tagFieldValue = useRef('');
     const dispatch = useDispatch();
-    const { keywordResults, clearKeywordResult } = useSelector(state=>state.modal)
+    const { keywordResults, clearKeywordResult } = useSelector<RootState, ModalState>(state => state.modal) // FIXME: what is the type here? we don't see this component being rendered
     const [open, setOpen] = React.useState(false);
     const [queryError, setQueryError] = React.useState(false)
     const [success, setSuccess] = React.useState(false);
-    const cardArr = []
+    const cardArr: ReactElement[] = [];
     
     const handleClose = () => {
-      setOpen(false);
+        setOpen(false);
     };
     const handleOpen = () => {
-      setOpen(true);
+        setOpen(true);
     };
     
-    const addHandler = (recipe) => {
+    const addHandler: RecipeProps["addHandler"] = (recipe) => {
         handleOpen();
         setQueryError(true);
         return () => {
@@ -34,7 +36,7 @@ function APIAddForm() {
             }})
             .then((res) => {
                 if (res.ok) return res.json();
-                throw new Error(res.status);
+                throw new Error(String(res.status));
               })
             .then(data => dispatch(addCard(data)))
             .then(() => handleClose())
@@ -45,29 +47,31 @@ function APIAddForm() {
         }
     }
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         handleOpen();
         setQueryError(false)
         
-        const keywords = keywordFieldValue.current.value.split(' ');
-        const tags = tagFieldValue.current.value.split(' ');
+        const keywords = keywordFieldValue.current.valueOf().split(' '); // FIXME: probably better to use toString() instead of valueOf()
+        const tags = tagFieldValue.current.valueOf().split(' ');
         
-        let tagsQuery;
-        let keywordsQuery;
+        let tagsQuery = '';
+        let keywordsQuery = '';
 
         if (keywords[0] === '') {
             keywordsQuery = 'null'
-            keywords.shift()
+            keywords.shift();
         } else {
-            keywordsQuery = keywords.shift();
+            keywordsQuery = keywords[0];
+            keywords.shift();
         }
         
         if (tags[0] === '') {
             tagsQuery = 'null'
             tags.shift()
         } else {
-            tagsQuery = tags.shift();
+            tagsQuery = tags[0];
+            tags.shift();
         }
         
         while (keywords.length >= 1) {
@@ -83,12 +87,12 @@ function APIAddForm() {
         await fetch(query)
             .then((res) => {
                 if (res.ok) return res.json();
-                throw new Error(res.status);
+                throw new Error(String(res.status));
             })
             .then((data) => {
                 for (let i = 0; i < 5; i++) {
                     const { title } = data[i];
-                    cardArr.push(<RecipeCard key={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
+                    cardArr.push(<RecipeCard image='noImage' key={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
                 }
                 dispatch(setKeywordResult(cardArr))
             })
@@ -120,3 +124,4 @@ function APIAddForm() {
 }
 
 export default APIAddForm;
+

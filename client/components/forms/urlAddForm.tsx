@@ -1,11 +1,12 @@
-import React, { useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import { TextField, Button, Box, Typography, CircularProgress, Backdrop, Alert} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux'
 import { setUrlResult, clearUrlResult, State as ModalState } from '../../slices/modalSlice';
 import { addCard } from '../../slices/cardSlice'
 import { RootState } from '../..';
 
-function UrlAddForm() {
+const UrlAddForm: FC<{}> = () => {
+// function UrlAddForm() {
     const fieldValue = useRef('');
     const dispatch = useDispatch();
     const {urlScrape} = useSelector<RootState, ModalState>(state=>state.modal) // FIXME: what is the type here? we don't see this component being rendered

@@ -2,7 +2,7 @@
 /* eslint-disable radix */
 import { Request, Response, NextFunction } from 'express';
 import { QueryResult } from 'pg';
-const db = require('../models/databaseModels');
+import { db } from '../models/databaseModels';
 const { deleteFileFromS3 } = require('../utils/awsS3Connection');
 import { RouteType } from './RouteType';
 
@@ -54,21 +54,28 @@ interface Recipe {
 
 const databaseController: databaseController = {
 
-  getAllRecipes: (req, res, next) => {
+  getAllRecipes: async (req, res, next) => {
+    console.log('In get all recipes');
+    console.log('request: ' + req);
     const allRecipeQuery = `SELECT * FROM recipes`;
-    db.query(allRecipeQuery)
-      //find intended structure of data from db
-      .then((data: QueryResult) => {
-        res.locals = data.rows;
-        //res.locals = camelCaseTheKey(data.rows);
-        return next();
-      })
-      .catch((error: Error) =>
-        next({
-          log: `Error encountered in databaseController.getAllRecipe, ${error}`,
-          message: 'Error encountered when querying the database.',
-        })
-      );
+    console.log(allRecipeQuery);
+    const result = await db.query(allRecipeQuery)
+    res.locals = result.rows;
+    console.log('This is res.locals', res.locals)
+    return next()
+      // //find intended structure of data from db
+      // .then((data: QueryResult) => {
+      //   console.log("These are the rows", data.rows);
+      //   res.locals = data.rows;
+      //   //res.locals = camelCaseTheKey(data.rows);
+      //   return next();
+      // })
+      // .catch((error: Error) =>
+      //   next({
+      //     log: `Error encountered in databaseController.getAllRecipe, ${error}`,
+      //     message: 'Error encountered when querying the database.',
+      //   })
+      // );
   },
 
   addRecipe: (req, res, next) => {

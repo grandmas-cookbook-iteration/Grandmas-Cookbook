@@ -5,9 +5,9 @@
   "main": "webpack.config.js",
   "scripts": {
     "test": "jest",
-    "start": "NODE_ENV=production node server/server.js",
+    "start": "NODE_ENV=production ts-node server/server.ts",
     "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development nodemon server/server.js"
+    "dev": "NODE_ENV=development webpack serve --open & NODE_ENV=development nodemon server/server.ts"
   },
   "repository": {
     "type": "git",
@@ -47,6 +47,7 @@
     "react-router-dom": "^6.10.0",
     "sass": "^1.60.0",
     "styled-components": "^5.3.9",
+    "ts-node": "^10.9.1",
     "webpack": "^5.65.0"
   },
   "devDependencies": {

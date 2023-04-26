@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import {
@@ -21,16 +21,21 @@ import { clearKeywordResult } from '../slices/modalSlice';
 import { RootState } from '../index';
 import { Recipe as Recipe } from '../slices/cardSlice';
 import APIAddForm from '../components/forms/ApiAddForm';
+import ClickAwayListener from '@mui/base/ClickAwayListener';
 
 
-function CardGrid() {
+
+const CardGrid: FC<{}> = () => {
+// function CardGrid() {
   const dispatch = useDispatch();
   // States to support live filtering of the recipes
   const [filteredRecipes, setFilteredRecipes] = React.useState<Recipe[]>([]);
   const [filterKeyword, setFilterKeyword] = React.useState<String>('');
 
   // State to support the add recipe modal.
-  const [openAddRecipe, setOpenAddRecipe] = React.useState<boolean>(false);
+  const [openAddRecipe, setOpenAddRecipe] = React.useState<boolean>(true);
+  
+  const [recipesArray, setRecipesArray] = React.useState<Recipe[]>([]);
 
   // Handler for control the filter keyword in text field.
   //
@@ -41,11 +46,15 @@ function CardGrid() {
     setOpenAddRecipe(false);
     dispatch(clearKeywordResult())
   };
-  const handleOpenAddRecipe = () => {
+  function handleOpenAddRecipe(event?: React.MouseEvent<HTMLButtonElement, MouseEvent | TouchEvent>){
+  // const handleOpenAddRecipe = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    console.log('This is openAddRecipe', openAddRecipe);
+    event && event.preventDefault();
     setOpenAddRecipe(true);
   };
 
-  const recipesArray = useSelector<RootState, Recipe[]>((state) => state.card.recipes)
+  // const recipesArray = useSelector<RootState, Recipe[]>((state) => state.card.recipes)
+  // console.log('recipes array =>', recipesArray);
   
 
 // import { configureStore } from '@reduxjs/toolkit'
@@ -69,6 +78,10 @@ function CardGrid() {
       })
       .then((data) => {
         dispatch(init(data));
+        setRecipesArray(
+          // useSelector<RootState, Recipe[]>((state) => state.card.recipes)
+          data
+        )
       })
       .catch((err) => console.log(`Error code: ${err}`));
   }, []);
@@ -81,15 +94,23 @@ function CardGrid() {
     );
   }, [recipesArray, filterKeyword]);
 
+  // const logSomething = () => {
+  //   console.log("hello");
+  // }
+  // logSomething();
+
   return (
     <main>
       <div>
         <Container maxWidth="lg">
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ textAlign: 'center' }}>
-              <Button variant="contained" onClick={handleOpenAddRecipe} sx={{marginTop: '16px'}}>
-                Get New Recipe
-              </Button>
+              {/* <ClickAwayListener onClickAway={handleOpenAddRecipe}> */}
+                <Button variant="contained" onChange={(e) => handleOpenAddRecipe()} sx={{marginTop: '16px'}}>
+                {/* <Button variant="contained" onClick={() => setOpenAddRecipe(true)} sx={{marginTop: '16px'}}> */}
+                  Get New Recipe
+                </Button>
+              {/* </ClickAwayListener> */}
             </Grid>
             <Grid item xs={12} sx={{ textAlign: 'center' }}>
               <TextField
@@ -113,7 +134,7 @@ function CardGrid() {
                           flexDirection: 'column',
                         }}
                       >
-                        <RecipeCard key={`${card.id}`} addHandler={(card) => () => undefined} type='' recipe={card} title={card.title} image={card.imagePath} />
+                        <RecipeCard cardId={`${card.id}`} addHandler={(card) => () => undefined} type='' recipe={card} title={card.title} image={card.imagepath} />
                       </Card>
                     </Grid>
                   ))}

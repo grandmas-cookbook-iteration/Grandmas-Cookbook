@@ -12,6 +12,7 @@ interface tastyApiController {
     tastyFindSimilarRecipeByID: RouteType
     tastyGetTipsForID: RouteType
     tastyGetFeed: RouteType
+    tastyGetMoreInfo: RouteType
 };
 
 interface Dish {
@@ -253,24 +254,24 @@ const tastyApiController: tastyApiController = {
 
     // TODO: POSSIBLY REMOVE AS THIS ENDPOINT IS REDUNDANT
 
-    // tastyGetMoreInfo: (req, res, next) => {
-    //     const { id } = req.body;
-    //     const type = tastyTypes.recipes.GET_MORE_INFO;
+    tastyGetMoreInfo: (req, res, next) => {
+        const { id } = req.body;
+        const type = tastyTypes.recipes.GET_MORE_INFO;
 
-    //     fetch(`${url}recipes/${type}?id=${id}`, options)
-    //         .then((result : FetchResponse) => result.json())
-    //         //find structure of json
-    //         .then((json : any) => {
-    //             res.locals.recipeData = json;
-    //             next();
-    //         })
-    //         .catch((err: Error) => {
-    //             next({
-    //                 log: `Error encountered in tastyApiController/tastyGetMoreInfo function. ${err}`,
-    //                 message: 'Could not query the data',
-    //             })
-    //         });
-    // },
+        fetch(`${url}recipes/${type}?id=${id}`, options)
+            .then((result : FetchResponse) => result.json())
+            //find structure of json
+            .then((json : any) => {
+                res.locals.recipeData = json;
+                next();
+            })
+            .catch((err: Error) => {
+                next({
+                    log: `Error encountered in tastyApiController/tastyGetMoreInfo function. ${err}`,
+                    message: 'Could not query the data',
+                })
+            });
+    },
 
     // tastyGetMoreInfo({body:{id: 8138}});
 

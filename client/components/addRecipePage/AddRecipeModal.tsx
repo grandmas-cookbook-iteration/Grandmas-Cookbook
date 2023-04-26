@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Modal from '@mui/material/Modal';
-import AddRecipeTab from './AddRecipeTab.jsx';
+import AddRecipeTab from './AddRecipeTab';
 import { FC } from 'react';
 
 const boxStyle = {

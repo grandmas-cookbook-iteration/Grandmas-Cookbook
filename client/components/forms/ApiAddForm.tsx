@@ -6,8 +6,8 @@ import { addCard } from '../../slices/cardSlice'
 import RecipeCard, { RecipeProps } from '../recipeCard';
 import { RootState } from '../..';
 
-
-function APIAddForm() {
+const APIAddForm: FC<{}> = () => {
+// function APIAddForm() {
     const keywordFieldValue = useRef('');
     const tagFieldValue = useRef('');
     const dispatch = useDispatch();
@@ -93,7 +93,7 @@ function APIAddForm() {
             .then((data) => {
                 for (let i = 0; i < 5; i++) {
                     const { title } = data[i];
-                    cardArr.push(<RecipeCard image='noImage' key={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
+                    cardArr.push(<RecipeCard image='noImage' cardId={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
                 }
                 dispatch(setKeywordResult(cardArr))
             })

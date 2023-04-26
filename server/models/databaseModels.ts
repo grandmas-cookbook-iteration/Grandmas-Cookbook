@@ -7,6 +7,7 @@ const pool = new Pool({
   connectionString: process.env.DB_URI,
 });
 
+
 /*
 It is a good practice to have id in the table, to provide a stable reference point (won't change if any data of the row is updated) for other tables.  
 
@@ -63,3 +64,4 @@ export const db = {
     }
   }
 };
+

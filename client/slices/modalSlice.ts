@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import RecipeCard from '../components/recipeCard'
 
 const { createSlice } = require('@reduxjs/toolkit');
@@ -11,8 +12,8 @@ interface urlScrape {
 
 export interface State {
     urlScrape: urlScrape
-    keywordResults: String[]
-    clearKeywordResult: (state: State) => undefined
+    keywordResults: ReactElement[]
+    clearKeywordResult: () => undefined
 }
 
 interface UrlParam {
@@ -20,7 +21,7 @@ interface UrlParam {
 }
 
 interface KeyWord {
-    payload: String[]
+    payload: ReactElement[]
 }
 
 const modalSlice = createSlice({

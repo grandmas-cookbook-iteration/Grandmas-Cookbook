@@ -25,16 +25,18 @@ export interface RecipeProps {
   type: String;
   addHandler: ((recipe: Recipe) => () => void);
   title: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
-  image: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
+  // image: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
   cardId: String;
 };
 
 // Rethink how this component is being rendered in different ways within cardGrid and ApiAddForm, leading to unnecessary props being passed from cardGrid (addHandler)
 
-const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, image, cardId }) => {
+const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, cardId }) => {
+  // if (recipe.ingredientList)
   // need to loop through the the fetch data
   // console.log('type', type)
   // const [saveEdit, setSaveEdit] = useToggle();
+  // if (recipe.imagePath) recipe.imagepath = recipe.imagePath;
 
   const dispatch = useDispatch();
 
@@ -51,7 +53,7 @@ const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, image, c
     .catch((err) => console.log(`Error code: ${err}`));
   };
   console.log(`recipe image: ${recipe.imagepath}`);
-  console.log(`recipe: ${JSON.stringify(recipe)}`);
+  // console.log(`recipe: ${JSON.stringify(recipe)}`);
   if (deleteButton) {
     return (
       <Card sx={{ maxWidth: 600,

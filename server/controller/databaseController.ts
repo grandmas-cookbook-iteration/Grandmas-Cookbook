@@ -55,13 +55,16 @@ interface Recipe {
 const databaseController: databaseController = {
 
   getAllRecipes: async (req, res, next) => {
-    console.log('In get all recipes');
-    console.log('request: ' + req);
+    // console.log('In get all recipes');
+    // console.log('request: ' + req);
     const allRecipeQuery = `SELECT * FROM recipes`;
-    console.log(allRecipeQuery);
+    // console.log(allRecipeQuery);
     const result = await db.query(allRecipeQuery)
+    for (let i = 0; i < result.rows.length; i++) {
+      result.rows[i].ingredientList = result.rows[i].ingredientlist;
+    }
     res.locals = result.rows;
-    console.log('This is res.locals', res.locals)
+    // console.log('This is res.locals', res.locals)
     return next()
       // //find intended structure of data from db
       // .then((data: QueryResult) => {

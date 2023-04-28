@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import {
@@ -18,86 +18,53 @@ import RecipeCard from '../components/recipeCard';
 import AddRecipeModal from '../components/addRecipePage/AddRecipeModal';
 import { init } from '../slices/cardSlice';
 import { clearKeywordResult } from '../slices/modalSlice';
-import { RootState } from '../index';
-import { Recipe as Recipe } from '../slices/cardSlice';
-import APIAddForm from '../components/forms/ApiAddForm';
-import ClickAwayListener from '@mui/base/ClickAwayListener';
 
-
-
-const CardGrid: FC<{}> = () => {
-// function CardGrid() {
+function CardGrid() {
   const dispatch = useDispatch();
   // States to support live filtering of the recipes
-  const [filteredRecipes, setFilteredRecipes] = React.useState<Recipe[]>([]);
-  const [filterKeyword, setFilterKeyword] = React.useState<String>('');
+  const [filteredRecipes, setFilteredRecipes] = React.useState([]);
+  const [filterKeyword, setFilterKeyword] = React.useState('');
+  const [recipes, setRecipeArray] = React.useState([]);
 
   // State to support the add recipe modal.
-  const [openAddRecipe, setOpenAddRecipe] = React.useState<boolean>(true);
-  
-  const [recipesArray, setRecipesArray] = React.useState<Recipe[]>([]);
+  const [openAddRecipe, setOpenAddRecipe] = React.useState(false);
 
   // Handler for control the filter keyword in text field.
-  //
-  const onFilterKeywordChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => setFilterKeyword(e.target.value);
+  const onFilterKeywordChange = (e) => setFilterKeyword(e.target.value);
 
   // Two handlers for open and close the add recipe modal.
   const handleCloseAddRecipe = () => {
     setOpenAddRecipe(false);
     dispatch(clearKeywordResult())
   };
-  function handleOpenAddRecipe(event?: React.MouseEvent<HTMLButtonElement, MouseEvent | TouchEvent>){
-  // const handleOpenAddRecipe = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    console.log('This is openAddRecipe', openAddRecipe);
-    event && event.preventDefault();
+  const handleOpenAddRecipe = () => {
     setOpenAddRecipe(true);
   };
 
-  // const recipesArray = useSelector<RootState, Recipe[]>((state) => state.card.recipes)
-  // console.log('recipes array =>', recipesArray);
-  
-
-// import { configureStore } from '@reduxjs/toolkit'
-// // ...
-// const store = configureStore({
-//   reducer: {
-//     one: oneSlice.reducer,
-//     two: twoSlice.reducer,
-//   },
-// })
-// export type RootState = ReturnType<typeof store.getState>
-
-// export default store
-
+    // const { recipes } = useSelector(state=>state.card)
+   
 
   useEffect(() => {
     fetch('/recipe/all', { method: 'GET' })
       .then((res) => {
         if (res.ok) return res.json();
-        throw new Error(String(res.status));
+        throw new Error(res.status);
       })
       .then((data) => {
+        setRecipeArray(data);
         dispatch(init(data));
-        setRecipesArray(
-          // useSelector<RootState, Recipe[]>((state) => state.card.recipes)
-          data
-        )
       })
       .catch((err) => console.log(`Error code: ${err}`));
   }, []);
 
   useEffect(() => {
     setFilteredRecipes(
-      recipesArray.filter((recipe) => {
+      recipes.filter((recipe) => {
+        // console.log(recipe)
         return recipe.title.toLowerCase().includes(filterKeyword.toLowerCase())
       })
     );
-  }, [recipesArray, filterKeyword]);
-
-  // const logSomething = () => {
-  //   console.log("hello");
-  // }
-  // logSomething();
+  }, [recipes, filterKeyword]);
 
   return (
     <main>
@@ -105,12 +72,9 @@ const CardGrid: FC<{}> = () => {
         <Container maxWidth="lg">
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ textAlign: 'center' }}>
-              {/* <ClickAwayListener onClickAway={handleOpenAddRecipe}> */}
-                <Button variant="contained" onChange={(e) => handleOpenAddRecipe()} sx={{marginTop: '16px'}}>
-                {/* <Button variant="contained" onClick={() => setOpenAddRecipe(true)} sx={{marginTop: '16px'}}> */}
-                  Get New Recipe
-                </Button>
-              {/* </ClickAwayListener> */}
+              <Button variant="contained" onClick={handleOpenAddRecipe} sx={{marginTop: '16px'}}>
+                Get New Recipe
+              </Button>
             </Grid>
             <Grid item xs={12} sx={{ textAlign: 'center' }}>
               <TextField
@@ -134,7 +98,7 @@ const CardGrid: FC<{}> = () => {
                           flexDirection: 'column',
                         }}
                       >
-                        <RecipeCard cardId={`${card.id}`} addHandler={(card) => () => undefined} type='' recipe={card} title={card.title} image={card.imagepath} />
+                        <RecipeCard recipe={card} title={card.title} image={card.imagePath} />
                       </Card>
                     </Grid>
                   ))}

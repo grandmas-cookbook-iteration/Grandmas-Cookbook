@@ -8,13 +8,14 @@ import { RootState } from '../..';
 
 const APIAddForm: FC<{}> = () => {
 // function APIAddForm() {
-    const keywordFieldValue = useRef('');
-    const tagFieldValue = useRef('');
+    const keywordFieldValue = useRef<HTMLInputElement>(null);
+    const tagFieldValue = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
     const { keywordResults, clearKeywordResult } = useSelector<RootState, ModalState>(state => state.modal) // FIXME: what is the type here? we don't see this component being rendered
     const [open, setOpen] = React.useState(false);
     const [queryError, setQueryError] = React.useState(false)
     const [success, setSuccess] = React.useState(false);
+    // const [ keywordResults, clearKeywordResult ] = React.useState<ReactElement[]>([]);
     const cardArr: ReactElement[] = [];
     
     const handleClose = () => {
@@ -35,7 +36,7 @@ const APIAddForm: FC<{}> = () => {
                 'Content-type': 'application/json',
             }})
             .then((res) => {
-                console.log("recipe", recipe)
+                // console.log("recipe", recipe)
                 if (res.ok) return res.json();
                 throw new Error(String(res.status));
               })
@@ -53,8 +54,17 @@ const APIAddForm: FC<{}> = () => {
         handleOpen();
         setQueryError(false)
         
-        const keywords = keywordFieldValue.current.valueOf().split(' '); // FIXME: probably better to use toString() instead of valueOf()
-        const tags = tagFieldValue.current.valueOf().split(' ');
+        let keywords;
+        let tags;
+        if(keywordFieldValue.current && tagFieldValue.current) {
+            keywords = keywordFieldValue.current.value.split(' '); // FIXME: probably better to use toString() instead of valueOf()
+            tags = tagFieldValue.current.value.split(' ');
+            
+        console.log('keywordFieldValue.current: ', keywordFieldValue.current);
+        console.log('ttagFieldValue.currentags: ', tagFieldValue.current);
+
+        console.log('keywords: ', keywords);
+        console.log('tags: ', tags);
         
         let tagsQuery = '';
         let keywordsQuery = '';
@@ -83,7 +93,8 @@ const APIAddForm: FC<{}> = () => {
             tagsQuery += `%20${  tags.shift()}`
         }
 
-        const query = 'http://localhost:3000/tasty/tagQuery/0/50/' + tagsQuery.toLowerCase() + '/' + keywordsQuery.toLowerCase()
+        const query = 'http://localhost:3000/tasty/tagQuery/0/50/' + tagsQuery.toLowerCase() + '/' + keywordsQuery.toLowerCase();
+        // console.log(`query string: ${query}`);
 
         await fetch(query)
             .then((res) => {
@@ -93,9 +104,11 @@ const APIAddForm: FC<{}> = () => {
             .then((data) => {
                 for (let i = 0; i < 5; i++) {
                     const { title } = data[i];
-                    cardArr.push(<RecipeCard image='noImage' cardId={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
+                    data[i].imagepath = data[i].imagePath;
+                    cardArr.push(<RecipeCard key={i} cardId={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
                 }
                 dispatch(setKeywordResult(cardArr))
+                // clearKeywordResult(cardArr);
             })
             .then(() => handleClose())
             .catch((err) => {
@@ -103,6 +116,8 @@ const APIAddForm: FC<{}> = () => {
                 handleClose()
             })
             // .then(() => dispatch(clearKeywordResult()))
+        }
+
     };
 
     return (

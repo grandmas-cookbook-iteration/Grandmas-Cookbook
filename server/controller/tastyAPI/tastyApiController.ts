@@ -78,6 +78,7 @@ const options = {
 
 const tastyApiController: tastyApiController = {
     tastyAutoCompleteQuery: (req, res, next) => {
+        console.log("Inside tastyAutoCompleteQuery")
         const query = req.params.searchTerm;
         const type = tastyTypes.recipes.AUTO_COMPLETE;
 
@@ -104,6 +105,7 @@ const tastyApiController: tastyApiController = {
   
 
     tastyList: (req, res, next) => { 
+        // console.log('inside tastyList');
         const { start } = req.params;
         const { size } = req.params;
         let { tags } = req.params;
@@ -124,13 +126,17 @@ const tastyApiController: tastyApiController = {
 
         if (q !== 'null') {
             const qSplit = q.split(' ');
-            for (let i = 0; i < q.length; i++) {
+            //q = q.split(' ');
+            console.log(`qSplit: ${qSplit}`);
+            for (let i = 0; i < qSplit.length; i++) {
                 if (i === 0) continue;
                 else {
-                    qSplit[i] = `%20${q[i]}`
+                    qSplit[i] = `%20${qSplit[i]}`
                 }
             }
             q = qSplit.join('');
+            // q = 'pizza';
+            // console.log(`q: ${q}`);
         } else {
             q = '';
         }
@@ -141,6 +147,7 @@ const tastyApiController: tastyApiController = {
             //find structure of result.json()
             .then((json: any) => { 
                 const resultArray = json.results;
+                console.log('ResultArray:', resultArray);
                 let dishes: Dish[] = [];
                 for (let i = 0; i < resultArray.length; i++) {
                     if (resultArray[i] === undefined || resultArray[i] === null) continue;
@@ -203,12 +210,14 @@ const tastyApiController: tastyApiController = {
     //tastyList({body:{start: 0, size: 20, tags: ['under_30_minutes'], q:['pasta']}});
 
     tastyGetTags: (req, res, next) => {
+        console.log('Inside tasty get tags');
         const type = tastyTypes.tags.LIST;
 
         fetch(`${url}tags/${type}`, options)
             .then((result : FetchResponse) => result.json())
             //find structure of json
             .then((json: GetTagsJson) => {
+                console.log('Json retrieved');
                 const tastyTags = json.results;
                 const tagsArr : string[] = [];
 

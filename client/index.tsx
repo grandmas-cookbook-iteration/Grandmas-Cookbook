@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import App from './App';
@@ -20,9 +20,9 @@ export type RootState = {
   card : CardState;
   modal : ModalState;
 }
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(
   <Provider store={store}>
     <App />    
-  </Provider>,
-  document.getElementById('root')
+  </Provider>
 );

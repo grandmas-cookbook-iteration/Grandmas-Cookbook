@@ -1,10 +1,11 @@
 const { createSlice } = require('@reduxjs/toolkit');
 
 export interface Recipe {
+    imagePath: any;
     id: number, 
     title: String,
     image: Blob,
-    ingredients: String[],
+    ingredientList: String[],
     directions: String[],
     imagepath: String
 }

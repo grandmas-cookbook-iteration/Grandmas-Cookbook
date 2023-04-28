@@ -15,6 +15,7 @@ interface MoreButtonProps {
 };
 
 const MoreButton: FC<MoreButtonProps> = ({ recipe }) => {
+
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
@@ -117,7 +118,7 @@ const MoreButton: FC<MoreButtonProps> = ({ recipe }) => {
             // multiline
             style={{ whiteSpace: 'pre-line' }}
           >
-            {recipe.ingredients ? recipe.ingredients.join('\n') : null}
+            {recipe.ingredientList ? recipe.ingredientList.join('\n') : null}
           </DialogContentText>
         </DialogContent>
 

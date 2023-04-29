@@ -74,7 +74,7 @@ const MoreButton: FC<MoreButtonProps> = ({ recipe }) => {
         })
         .catch((err) => console.log(`Error code: ${err}`));
     } else setSaveEditButton('Save');
-    setCanEdit(!canEdit);
+    setCanEdit((state) => !state);
   };
 
   const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {

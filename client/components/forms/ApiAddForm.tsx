@@ -2,9 +2,10 @@ import React, { useRef, FC, ReactElement } from 'react';
 import { TextField, Button, Box, Typography, Backdrop, CircularProgress, Alert} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux'
 import { setKeywordResult, clearKeywordResult, State as ModalState } from '../../slices/modalSlice';
-import { addCard } from '../../slices/cardSlice'
+import { addCard, deleteCard, Recipe as RecipeType } from '../../slices/cardSlice'
 import RecipeCard, { RecipeProps } from '../recipeCard';
 import { RootState } from '../..';
+import { Recipe } from 'aws-sdk/clients/personalize';
 
 const APIAddForm: FC<{}> = () => {
 // function APIAddForm() {
@@ -24,8 +25,21 @@ const APIAddForm: FC<{}> = () => {
     const handleOpen = () => {
         setOpen(true);
     };
+
+    const handleDelete = (recipe: RecipeType) => {
+        fetch(`/recipe/delete/${recipe.id}`, {
+          method: 'DELETE',
+        }).then((res) => {
+          if (res.ok) {
+            dispatch(deleteCard(recipe));
+          } else {
+            throw new Error(String(res.status));
+          }
+        })
+        .catch((err) => console.log(`Error code: ${err}`));
+      }
     
-    const addHandler: RecipeProps["addHandler"] = (recipe) => {
+    const addHandler: any = (recipe: any) => {
         handleOpen();
         setQueryError(true);
         return () => {
@@ -105,7 +119,7 @@ const APIAddForm: FC<{}> = () => {
                 for (let i = 0; i < 5; i++) {
                     const { title } = data[i];
                     data[i].imagepath = data[i].imagePath;
-                    cardArr.push(<RecipeCard key={i} cardId={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
+                    cardArr.push(<RecipeCard onDelete = {handleDelete} key={i} cardId={title} title={title} type='addForm' recipe={data[i]} addHandler={addHandler} />)
                 }
                 dispatch(setKeywordResult(cardArr))
                 // clearKeywordResult(cardArr);

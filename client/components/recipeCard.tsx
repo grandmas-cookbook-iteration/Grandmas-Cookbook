@@ -27,11 +27,12 @@ export interface RecipeProps {
   title: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
   // image: String; // FIXME: we're not using this prop, should we remove it from cardGrid?
   cardId: String;
+  onDelete: (recipe: Recipe) => void;
 };
 
 // Rethink how this component is being rendered in different ways within cardGrid and ApiAddForm, leading to unnecessary props being passed from cardGrid (addHandler)
 
-const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, cardId }) => {
+const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, cardId, onDelete }) => {
   // if (recipe.ingredientList)
   // need to loop through the the fetch data
   // console.log('type', type)
@@ -41,17 +42,17 @@ const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, cardId }
   const dispatch = useDispatch();
 
   const [deleteButton, setDeleteButton] = React.useState(true);
-  const setDeleteButtonLogic = () => {
-    setDeleteButton((prev) => !prev);
-    fetch(`/recipe/delete/${recipe.id}`, {
-      method: 'DELETE',
-    })
-    .then((res) => {
-      if (res.ok) return dispatch(deleteCard(recipe));
-      throw new Error(String(res.status));
-    })
-    .catch((err) => console.log(`Error code: ${err}`));
-  };
+  // const setDeleteButtonLogic = () => {
+  //   setDeleteButton((prev) => !prev);
+  //   fetch(`/recipe/delete/${recipe.id}`, {
+  //     method: 'DELETE',
+  //   })
+  //   .then((res) => {
+  //     if (res.ok) return dispatch(deleteCard(recipe));
+  //     throw new Error(String(res.status));
+  //   })
+  //   .catch((err) => console.log(`Error code: ${err}`));
+  // };
   console.log(`recipe image: ${recipe.imagepath}`);
   // console.log(`recipe: ${JSON.stringify(recipe)}`);
   if (deleteButton) {
@@ -79,7 +80,11 @@ const RecipeCard: FC<RecipeProps> = ({ recipe, type, addHandler, title, cardId }
         <CardActions> 
           {type === 'addForm' ? <Button color="success" onClick={addHandler(recipe)}>Add</Button> : null}
           <MoreButton recipe={recipe}/>
-          <Button color="error"  size="small" onClick={setDeleteButtonLogic}>
+          <Button color="error"  size="small" onClick={()=> {
+            console.log('This is the recipe:', recipe)
+            onDelete(recipe)
+            setDeleteButton(false);
+            }}>
             Delete
           </Button>
         </CardActions>

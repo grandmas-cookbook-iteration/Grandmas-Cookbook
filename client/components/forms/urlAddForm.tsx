@@ -2,7 +2,7 @@ import React, { FC, useRef } from 'react';
 import { TextField, Button, Box, Typography, CircularProgress, Backdrop, Alert} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux'
 import { setUrlResult, clearUrlResult, State as ModalState } from '../../slices/modalSlice';
-import { addCard } from '../../slices/cardSlice'
+import { addCard, deleteCard } from '../../slices/cardSlice'
 import { RootState } from '../..';
 
 const UrlAddForm: FC<{}> = () => {

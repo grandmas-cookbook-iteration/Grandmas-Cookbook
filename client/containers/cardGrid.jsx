@@ -18,13 +18,15 @@ import RecipeCard from '../components/recipeCard';
 import AddRecipeModal from '../components/addRecipePage/AddRecipeModal';
 import { init } from '../slices/cardSlice';
 import { clearKeywordResult } from '../slices/modalSlice';
+import { deleteCard } from '../slices/cardSlice';
 
 function CardGrid() {
   const dispatch = useDispatch();
   // States to support live filtering of the recipes
+  const { recipes } = useSelector(state=>state.card)
   const [filteredRecipes, setFilteredRecipes] = React.useState([]);
   const [filterKeyword, setFilterKeyword] = React.useState('');
-  const [recipes, setRecipeArray] = React.useState([]);
+  // const [recipes, setRecipeArray] = React.useState([]);
 
   // State to support the add recipe modal.
   const [openAddRecipe, setOpenAddRecipe] = React.useState(false);
@@ -41,7 +43,30 @@ function CardGrid() {
     setOpenAddRecipe(true);
   };
 
-    // const { recipes } = useSelector(state=>state.card)
+  const handleDelete = (recipe) => {
+    fetch(`/recipe/delete/${recipe.id}`, {
+      method: 'DELETE',
+    }).then((res) => {
+      if (res.ok) {
+        dispatch(deleteCard(recipe));
+      } else {
+        throw new Error(String(res.status));
+      }
+    })
+    .catch((err) => console.log(`Error code: ${err}`));
+
+    // fetch('/recipe/all', { method: 'GET' })
+    // .then((res) => {
+    //   if (res.ok) return res.json();
+    //   throw new Error(res.status);
+    // })
+    // .then((data) => {
+    //   setRecipeArray(data);
+    //   dispatch(init(data));
+    // })
+    // .catch((err) => console.log(`Error code: ${err}`));
+  }
+
    
 
   useEffect(() => {
@@ -51,7 +76,7 @@ function CardGrid() {
         throw new Error(res.status);
       })
       .then((data) => {
-        setRecipeArray(data);
+        // setRecipeArray(data);
         dispatch(init(data));
       })
       .catch((err) => console.log(`Error code: ${err}`));
@@ -98,7 +123,7 @@ function CardGrid() {
                           flexDirection: 'column',
                         }}
                       >
-                        <RecipeCard recipe={card} title={card.title} image={card.imagePath} />
+                        <RecipeCard recipe={card} title={card.title} image={card.imagePath} onDelete={handleDelete}/>
                       </Card>
                     </Grid>
                   ))}

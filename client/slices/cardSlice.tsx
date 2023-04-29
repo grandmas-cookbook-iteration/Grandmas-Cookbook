@@ -1,4 +1,4 @@
-const { createSlice } = require('@reduxjs/toolkit');
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Recipe {
     imagePath: any;
@@ -14,9 +14,6 @@ export interface State {
     recipes: Recipe[]
 }
 
-interface Param {
-    payload: Recipe
-}
 
 const cardSlice = createSlice({
   name: 'card',
@@ -26,14 +23,13 @@ const cardSlice = createSlice({
   },
 
     reducers: {
-        init: (state: State, param: Param) => {
+        init: (state: State, param: PayloadAction<Recipe[]>) => {
             const { payload } = param;
-            const tempState = state;
-            tempState.recipes = [...state.recipes, payload];
+            state.recipes = [...state.recipes, ...payload];
         },
-        addCard: (state: State, param: Param) => {
+        addCard: (state: State, param: PayloadAction<Recipe>) => {
             const { payload } = param;
-            const tempState = state;
+            // const tempState = state;
             // fetch('/recipe/add', 
             //     {method: 'POST', 
             //     body: JSON.stringify(payload),
@@ -42,20 +38,24 @@ const cardSlice = createSlice({
             //     }})
             //     .then(res => res.json())
             //     .then(data => console.log(data));
-            tempState.recipes = [...state.recipes, payload]
+            state.recipes = [...state.recipes, payload]
         },
-        updateCard: (state: State, param: Param) => {
+        updateCard: (state: State, param: PayloadAction<Recipe>) => {
             const { payload } = param;
-            const tempState: Recipe[] = state.recipes;
-            const tempStateMap: Recipe[] = tempState.map((recipe) => {
-                if (recipe.id === payload.id) return payload;
+            // const tempState: Recipe[] = state.recipes;
+            // const tempStateMap: Recipe[] = tempState.map((recipe) => {
+            //     if (recipe.id === payload.id) return payload;
+            //     return recipe;
+            // })
+            state.recipes = state.recipes.map((recipe) => {
+                if(recipe.id === payload.id) return payload;
                 return recipe;
             })
         },
-        deleteCard: (state: State, param: Param) => {
+        deleteCard: (state: State, param: PayloadAction<Recipe>) => {
             const { payload } = param;
-            const tempState = state;
-            tempState.recipes = tempState.recipes.filter((recipe) => recipe.id !== payload.id)
+            // const tempState = state;
+            state.recipes = state.recipes.filter((recipe) => recipe.id !== payload.id)
         }
     }
 })
